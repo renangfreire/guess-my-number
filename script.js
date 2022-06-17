@@ -51,39 +51,43 @@ function changeColor(co){
     checkButton.style.color = co
 }
 
+function disableCheckButton(){
+    checkButton.setAttribute('disabled', '')
+    checkButton.style.opacity = '0.7';
+    checkButton.style.cursor = 'not-allowed'
+    console.log('disable')
+
+}
+function enableCheckButton(){
+    checkButton.removeAttribute('disabled')
+    checkButton.style.opacity = '1';
+    checkButton.style.cursor = 'pointer'
+    console.log('enable')
+}
+
 function checkGuess(guess){
     if(attempts < 1){
-        message.textContent = 'Try again!!!'
-        checkButton.setAttribute('disabled', '')
-        checkButton.style.opacity = '0.7';
-        checkButton.style.cursor = 'not-allowed'
+        message.textContent = '💥 You Lost the Game!'
+        disableCheckButton()
         changeColor('#660000')
-    } else{
-        if(!guess){
-            message.textContent = '🛑 Stop, insert a valid number'
-        } else{
-                if(guess == secretNumber){
-                    message.textContent = '🎉 Correct Number';
-                    if(highscore < attempts){
-                        highscore = attempts;
-                        localStorage.setItem('score', highscore)
-                        pHighscore.textContent = highscore
+        } 
+    else if (guess == secretNumber){
+        message.textContent = '🎉 Correct Number';
+            if(highscore < attempts){
+                highscore = attempts;
+                localStorage.setItem('score', highscore)
+                pHighscore.textContent = highscore
                     }
-                    divNumber.style.width = '30rem'
-                    divNumber.textContent = secretNumber
-                    changeColor('#60b347')
-                }
-                else if(guess > secretNumber){
-                    message.textContent = '📈 Too high!'
-                    attemptsCounter()
-                }
-                else if(guess < secretNumber){
-                    message.textContent = '📉 Too low!'
-                    attemptsCounter()
-                }
-        }
+                divNumber.style.width = '30rem'
+                divNumber.textContent = secretNumber
+                changeColor('#60b347')
+            }
+    else if(guess !== secretNumber){
+        message.textContent = (guess > secretNumber) ? '📈 Too high!' : '📉 Too low!';
+        attemptsCounter()
+        }  
     }
-}
+
 
 function resetValues(){
     window.location.reload();
@@ -100,14 +104,39 @@ function resetValues(){
     // changeColor('#222')
 }
 
+inputGuess.addEventListener('input', () => {
+    let guess = inputGuess.value
+    console.log(guess)
+    if(guess.length > 0) {
+        message.textContent = (Number(guess) > 20 || Number(guess) < 1) 
+        ?  
+        '🛑 Stop, insert a valid number'
+        : 
+        'Start guessing...'; 
+
+        if((Number(guess) > 20 || Number(guess) < 1)){
+            checkButton.hasAttribute('disabled' ) ? '' : disableCheckButton()
+        } else{
+            checkButton.hasAttribute('disabled') ? enableCheckButton() : ''
+        }
+    } else{
+        message.textContent = 'Start guessing...';
+        checkButton.hasAttribute('disabled') ? enableCheckButton() : ''
+    }
+})
+
+
+
 checkButton.addEventListener('click', () => {
     let guess = Number(inputGuess.value);
     checkGuess(guess)
 })
 
 againButton.addEventListener('click', resetValues)
+
 resetScoreButton.addEventListener('click', () => {
     localStorage.removeItem('score')
+    highscore = 0;
     pHighscore.textContent = 0;
 })
 
