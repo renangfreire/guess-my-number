@@ -26,7 +26,7 @@
 // Logical Variables
 let secretNumber = Math.trunc(Math.random()*20) + 1;
 let attempts = 20;
-let highscore = localStorage.getItem('score') || 0;
+let highscore = localStorage.getItem('score') ?? 0;
 
 // Elements DOM
 const checkButton = document.querySelector('.check');
